@@ -3,6 +3,10 @@ from selenium.webdriver.common.by import By
 from PIL import Image, ImageEnhance
 import os
 import time
+import random
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
 
 class Parser:
     def __init__(self, byfly_link, captcha_solve_link, profile, password):
@@ -17,15 +21,19 @@ class Parser:
 
         login_input = driver.find_element(By.ID, 'oper_user')
         login_input.send_keys(self.profile)
+        time.sleep(random.uniform(1.0, 2.0))
 
         password_input = driver.find_element(By.NAME, 'passwd')
         password_input.send_keys(self.password)
+        time.sleep(random.uniform(1.0, 2.0))
 
         save_captcha = driver.find_element(By.ID, 'capcher')
         save_captcha.screenshot('screenshots/first_captcha.png')
 
         captcha_text_input = driver.find_element(By.ID, 'cap_field')
+        self.change_captcha()
         captcha_text_input.send_keys(self.get_text())
+        time.sleep(random.uniform(1.0, 2.0))
 
         enter = driver.find_element(By.CSS_SELECTOR, "input[value='Войти]")
         enter.click()
@@ -50,6 +58,7 @@ class Parser:
 
     def get_text(self):
         driver = webdriver.Chrome()
+        wait = WebDriverWait(driver, 10)
         driver.get(self.captcha_solve_link)
         img_input = driver.find_element(By.CSS_SELECTOR, "label[for='uploadFile']")
         img_input.send_keys(os.path.abspath('screenshots/changed.png'))
@@ -63,3 +72,10 @@ class Parser:
 
     def __del__(self):
         print('programm succesfuly finished')
+
+def main():
+     parser = Parser('https://issaold.beltelecom.by/main.html', 'https://www.prepostseo.com/ru/image-to-text', 'HelloWorld', '12345678')
+     parser.byfly_registration()
+
+if __name__ == '__main__':
+     main()
